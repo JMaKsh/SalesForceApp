@@ -1,0 +1,488 @@
+<apex:page name="ComputerInventoryEditPage" sideBar="false" showHeader="false"
+           controller="ComputerInventoryEditPageController">
+    <style type="text/css">
+        .colHeadr {
+            text-align: center;
+        }
+    </style>
+    <apex:form >
+        <apex:pageBlock title="Computer Inventory">
+            <!-- Buttons -->
+            <apex:commandButton value="New" action="{!newCompInventory}"/>
+            <apex:commandButton value="New Multiple" action="{!newMultCompInventory}"/>
+            <apex:commandButton value="Delete Selected" action="{!deleteSelectedCompInventory}"/>
+            <apex:commandButton value="Edit Selected" action="{!editSelectedCompInventory}"/>
+            <!-- Buttons -->
+
+            <apex:pageBlockSection >
+                <apex:pageBlockTable value="{!wrapperListComputerInventory}" var="a">
+                    <apex:column >
+                        <apex:inputCheckbox value="{!a.selected}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:commandLink value="{!a.computerInventory.Name}"
+                                          action="{!computerInventoryDetail}">
+                            <apex:param name="computerInventory" value="{!a.computerInventory.Id}"
+                                        assignTo="{!computerInventoryID}"/>
+                        </apex:commandLink>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+
+        <apex:pageBlock title="Multiple adding Computer Inventories" rendered="{!multForm}">
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:commandButton value="Add new Row" action="{!addNewRowCompInventory}"/>
+            <apex:commandButton value="Save All" action="{!saveMultCompInventoryList}"/>
+            <apex:commandButton value="Cancel" action="{!cancelMultCompInventoryForm}"/>
+            <apex:pageBlockSection >
+                <apex:pageBlockTable value="{!multCompInventoryList}" var="multInventory">
+                    <apex:column headerClass="colHeadr" headervalue="Name">
+                        <apex:inputField value="{!multInventory.Name}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Inventory Number">
+                        <apex:inputField value="{!multInventory.Inventory_Number__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Value">
+                        <apex:inputField value="{!multInventory.Value__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Description">
+                        <apex:inputField value="{!multInventory.Description__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Customer">
+                        <apex:inputField value="{!multInventory.Customer__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Contact Person">
+                        <apex:inputField value="{!multInventory.Contact_Person__c}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:commandButton value="Add new Row" action="{!addNewRowCompInventory}"/>
+            <apex:commandButton value="Save All" action="{!saveMultCompInventoryList}"/>
+            <apex:commandButton value="Cancel" action="{!cancelMultCompInventoryForm}"/>
+        </apex:pageBlock>
+
+        <apex:pageBlock title="Multiple editing Computer Inventories" rendered="{!editRowStatus}">
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:commandButton value="Save All" action="{!saveEditInventoryList}"/>
+            <apex:commandButton value="Cancel" action="{!cancelEditInventoryList}"/>
+            <apex:pageBlockSection >
+                <apex:pageBlockTable value="{!editCompInventoryList}" var="inventory">
+                    <apex:column headerClass="colHeadr" headervalue="Name">
+                        <apex:inputField value="{!inventory.Name}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Inventory Number">
+                        <apex:inputField value="{!inventory.Inventory_Number__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Value">
+                        <apex:inputField value="{!inventory.Value__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Description">
+                        <apex:inputField value="{!inventory.Description__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Customer">
+                        <apex:inputField value="{!inventory.Customer__c}"/>
+                    </apex:column>
+                    <apex:column headerClass="colHeadr" headervalue="Contact Person">
+                        <apex:inputField value="{!inventory.Contact_Person__c}"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <apex:commandButton value="Save All" action="{!saveEditInventoryList}"/>
+            <apex:commandButton value="Cancel" action="{!cancelEditInventoryList}"/>
+        </apex:pageBlock>
+
+        <apex:pageBlock title="New Computer Inventory" rendered="{!visible}">
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:outputPanel id="newCompInventory">
+                <table id="tableForm" width='50%' border="0" cellpadding="5" cellspacing="0">
+                    <tr>
+                        <td>
+                            <strong>
+                                <apex:outputLabel value="Name: "/>
+                            </strong>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!newCompInventory.Name}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>
+                                <apex:outputLabel value="Inventory Number: "/>
+                            </strong>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!newCompInventory.Inventory_Number__c}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>
+                                <apex:outputLabel value="Value: "/>
+                            </strong>
+                        </td>
+                        <td>
+
+                            <apex:inputField value="{!newCompInventory.Value__c}"/>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>
+                                <apex:outputLabel value="Description: "/>
+                            </strong>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!newCompInventory.Description__c}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>
+                                <apex:outputLabel value="Customer: "/>
+                            </strong>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!newCompInventory.Customer__c}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>
+                                <apex:outputLabel value="Contact Person: "/>
+                            </strong>
+                        </td>
+                        <td>
+                            <apex:inputField value="{!newCompInventory.Contact_Person__c}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <apex:commandButton value="Save" action="{!saveNewCompInventory}"/>
+                            <apex:commandButton value="Cancel" action="{!cancelNewCompInventory}"/>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        <apex:pageBlock title="Computer Inventory Detail" id="compInventoryDetail" rendered="{!show}">
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:pageBlockSection columns="1" collapsible="false">
+                <apex:outputPanel id="InventoryDetail">
+                    <table id="tableForm" width='30%' border="0" cellpadding="5" cellspacing="0">
+                        <tr>
+                            <td/>
+                            <td>
+                                <apex:commandButton value="Save" action="{!saveEditCompInventory}"/>
+                                <apex:commandButton value="Cancel" action="{!cancelEditCompInventory}"/>
+                                <apex:commandButton value="Delete" action="{!deleteComputerInventory}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Name: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:outputField value="{!compInventoryDetail.Name}">
+                                    <apex:inlineEditSupport event="onClick"/>
+                                </apex:outputField>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Inventory Number: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:outputField value="{!compInventoryDetail.Inventory_Number__c}">
+                                    <apex:inlineEditSupport event="onClick"/>
+                                </apex:outputField>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Value: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:outputField value="{!compInventoryDetail.Value__c}">
+                                    <apex:inlineEditSupport event="onClick"/>
+                                </apex:outputField>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Description: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:outputField value="{!compInventoryDetail.Description__c}">
+                                    <apex:inlineEditSupport event="onClick"/>
+                                </apex:outputField>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Customer: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:outputField value="{!compInventoryDetail.Customer__c}">
+                                    <apex:inlineEditSupport event="onClick"/>
+                                </apex:outputField>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Contact Person: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:outputField value="{!compInventoryDetail.Contact_Person__c}">
+                                    <apex:inlineEditSupport event="onClick"/>
+                                </apex:outputField>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <apex:commandButton value="Save" action="{!saveEditCompInventory}"/>
+                                <apex:commandButton value="Cancel" action="{!cancelEditCompInventory}"/>
+                                <apex:commandButton value="Delete" action="{!deleteComputerInventory}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Computer Inventory Line Items" columns="2" collapsible="false">
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >
+                        <apex:commandButton value="New" action="{!newCompInventoryItem}"/>
+                        <apex:commandButton value="New Multiple" action="{!multCompInventoryItemList}"/>
+                        <apex:commandButton value="Delete Selected" action="{!deleteSelectedCompInventoryItem}"/>
+                        <apex:commandButton value="Edit Selected" action="{!editSelectedCompInventoryItem}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <strong> Computer Inventory Line Item Detail Info </strong>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="compInventoryItemList">
+                    <apex:pageBlockTable style="width:50%" value="{!wrapperListComputerInventoryItem}" var="item"
+                                         columnsWidth="10%,50%,40%">
+                        <apex:column width="10%">
+                            <apex:inputCheckbox value="{!item.selected}"/>
+                        </apex:column>
+                        <apex:column style="width:25%">
+                            <apex:commandLink value="{!item.computerInventoryItem.Name}"
+                                              action="{!computerInventoryDetailItem}">
+                                <apex:param name="computerInventoryItem" value="{!item.computerInventoryItem.Id}"
+                                            assignTo="{!computerInventoryItemId}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!editItemStatus}">
+                    <apex:outputPanel >
+                        <table id="tableForm" width='50%' border="0" cellpadding="5" cellspacing="0">
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <apex:commandButton value="Save" action="{!saveEditCompInventoryItem}"/>
+                                    <apex:commandButton value="Cancel" action="{!cancelEditCompInventoryItem}"/>
+                                    <apex:commandButton value="Delete" action="{!deleteComputerInventoryItem}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        <apex:outputLabel value="Name: "/>
+                                    </strong>
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!compInventoryItemDetail.Name}">
+                                        <apex:inlineEditSupport event="onClick"/>
+                                    </apex:outputField>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        <apex:outputLabel value="Type: "/>
+                                    </strong>
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!compInventoryItemDetail.Type__c}">
+                                        <apex:inlineEditSupport event="onClick"/>
+                                    </apex:outputField>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        <apex:outputLabel value="Model: "/>
+                                    </strong>
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!compInventoryItemDetail.Model__c}">
+                                        <apex:inlineEditSupport event="onClick"/>
+                                    </apex:outputField>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        <apex:outputLabel value="Serial Number "/>
+                                    </strong>
+                                </td>
+                                <td>
+                                    <apex:outputField value="{!compInventoryItemDetail.Serial_Number__c}">
+                                        <apex:inlineEditSupport event="onClick"/>
+                                    </apex:outputField>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <apex:commandButton value="Save" action="{!saveEditCompInventoryItem}">
+                                    </apex:commandButton>
+                                    <apex:commandButton value="Cancel" action="{!cancelEditCompInventoryItem}"/>
+                                    <apex:commandButton value="Delete" action="{!deleteComputerInventoryItem}"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlock title="Multiple adding Computer Inventory Items" rendered="{!multItemForm}">
+                <apex:commandButton value="Add new Row" action="{!addNewRowCompInventoryItem}"/>
+                <apex:commandButton value="Save All" action="{!saveMultCompInventoryItemList}"/>
+                <apex:commandButton value="Cancel" action="{!cancelMultCompInventoryItemForm}"/>
+                <apex:pageBlockSection >
+                    <apex:pageBlockTable value="{!multCompInventoryItemList}" var="item">
+                        <apex:column headerClass="colHeadr" headervalue="Name">
+                            <apex:inputField value="{!item.Name}"/>
+                        </apex:column>
+                        <apex:column headerClass="colHeadr" headervalue="Type">
+                            <apex:inputField value="{!item.Type__c}"/>
+                        </apex:column>
+                        <apex:column headerClass="colHeadr" headervalue="Model">
+                            <apex:inputField value="{!item.Model__c}"/>
+                        </apex:column>
+                        <apex:column headerClass="colHeadr" headervalue="Serial Number">
+                            <apex:inputField value="{!item.Serial_Number__c}"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:commandButton value="Add new Row" action="{!addNewRowCompInventoryItem}"/>
+                <apex:commandButton value="Save All" action="{!saveMultCompInventoryItemList}"/>
+                <apex:commandButton value="Cancel" action="{!cancelMultCompInventoryItemForm}"/>
+            </apex:pageBlock>
+
+            <apex:pageBlock rendered="{!editRowItemStatus}" title="Multiple editing Computer Inventories Items">
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:commandButton value="Save All" action="{!saveEditInventoryItemList}"/>
+                <apex:commandButton value="Cancel" action="{!cancelEditInventoryItemList}"/>
+                <apex:pageBlockSection >
+                    <apex:pageBlockTable value="{!editCompInventoryItemList}" var="invItem">
+                        <apex:column headerClass="colHeadr" headervalue="Name">
+                            <apex:inputField value="{!invItem.Name}"/>
+                        </apex:column>
+                        <apex:column headerClass="colHeadr" headervalue="Type">
+                            <apex:inputField value="{!invItem.Type__c}"/>
+                        </apex:column>
+                        <apex:column headerClass="colHeadr" headervalue="Model">
+                            <apex:inputField value="{!invItem.Model__c}"/>
+                        </apex:column>
+                        <apex:column headerClass="colHeadr" headervalue="Serial Number">
+                            <apex:inputField value="{!invItem.Serial_Number__c}"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:commandButton value="Save All" action="{!saveEditInventoryItemList}"/>
+                <apex:commandButton value="Cancel" action="{!cancelEditInventoryItemList}"/>
+            </apex:pageBlock>
+
+            <apex:pageBlockSection title="New Computer Inventory Item" columns="1" rendered="{!newItemStatus}">
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:outputPanel id="newCompInventory">
+                    <table id="tableForm" width='50%' border="0" cellpadding="5" cellspacing="0">
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <apex:commandButton value="Save" action="{!saveNewCompInventoryItem}"/>
+                                <apex:commandButton value="Cancel" action="{!cancelNewCompInventoryItem}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Name: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:inputField value="{!newCompInventoryItem.Name}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Type: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:inputField value="{!newCompInventoryItem.Type__c}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Model: "/>
+                                </strong>
+                            </td>
+                            <td>
+
+                                <apex:inputField value="{!newCompInventoryItem.Model__c}"/>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <apex:outputLabel value="Serial Number: "/>
+                                </strong>
+                            </td>
+                            <td>
+                                <apex:inputField value="{!newCompInventoryItem.Serial_Number__c}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <apex:commandButton value="Save" action="{!saveNewCompInventoryItem}"/>
+                                <apex:commandButton value="Cancel" action="{!cancelNewCompInventoryItem}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
